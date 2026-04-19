@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Masuk - Pengaduan Siswa</title>
+        <title>Daftar - Pengaduan Siswa</title>
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @else
@@ -78,6 +78,8 @@
             .form-group:nth-child(2) { animation-delay: 0.3s; }
             .form-group:nth-child(3) { animation-delay: 0.4s; }
             .form-group:nth-child(4) { animation-delay: 0.5s; }
+            .form-group:nth-child(5) { animation-delay: 0.6s; }
+            .form-group:nth-child(6) { animation-delay: 0.7s; }
             
             .form-label {
                 display: block;
@@ -129,33 +131,28 @@
                 background: linear-gradient(135deg, #f5ffff 0%, #e8f9fb 100%);
             }
             
-            .checkbox-wrapper {
-                display: flex;
-                align-items: center;
-                gap: 10px;
+            .form-select {
+                width: 100%;
                 max-width: 100%;
-                overflow: hidden;
-                box-sizing: border-box;
-            }
-            
-            .checkbox-input {
-                width: 20px;
-                height: 20px;
-                cursor: pointer;
-                accent-color: #00a8cc;
-                border-radius: 4px;
-            }
-            
-            .checkbox-label {
+                padding: 14px 18px;
+                font-size: 1rem;
+                border: 2px solid #d1eff5;
+                border-radius: 14px;
+                background: linear-gradient(135deg, #f0fffe 0%, #e0f7ff 100%);
                 color: #0d7377;
-                font-size: 0.95rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 font-weight: 500;
-                cursor: pointer;
-                user-select: none;
-                overflow-wrap: break-word;
-                word-break: break-word;
+                letter-spacing: 0.2px;
                 box-sizing: border-box;
-                max-width: 100%;
+            }
+            
+            .form-select:focus {
+                outline: none;
+                border-color: #00a8cc;
+                background: linear-gradient(135deg, #ffffff 0%, #f0fffe 100%);
+                box-shadow: 0 0 0 4px rgba(0, 168, 204, 0.15), 
+                            0 8px 16px rgba(13, 115, 119, 0.12);
+                transform: translateY(-2px);
             }
             
             .btn-login {
@@ -328,11 +325,11 @@
                 <div>
                     <div class="login-header">
                         <div class="login-badge">
-                            <i class="fas fa-shield-alt"></i>
-                            Sistem Aman
+                            <i class="fas fa-user-plus"></i>
+                            Pendaftaran
                         </div>
-                        <h1 class="login-title">Masuk</h1>
-                        <p class="login-subtitle">Masuk ke akun Anda untuk mengelola pengaduan.</p>
+                        <h1 class="login-title">Daftar Akun</h1>
+                        <p class="login-subtitle">Buat akun baru untuk mengakses sistem pengaduan.</p>
                     </div>
 
                     @if ($errors->any())
@@ -345,7 +342,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('login.submit') }}">
+                    <form method="POST" action="{{ route('register.submit') }}">
                         @csrf
 
                         <div class="form-group">
@@ -365,6 +362,37 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="nama" class="form-label">
+                                <i class="fas fa-id-card"></i> Nama Lengkap
+                            </label>
+                            <input
+                                id="nama"
+                                name="nama"
+                                type="text"
+                                value="{{ old('nama') }}"
+                                placeholder="Masukkan nama lengkap Anda"
+                                required
+                                class="form-input"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="role" class="form-label">
+                                <i class="fas fa-users-cog"></i> Role
+                            </label>
+                            <select
+                                id="role"
+                                name="role"
+                                required
+                                class="form-select"
+                            >
+                                <option value="">Pilih role Anda</option>
+                                <option value="siswa" {{ old('role') == 'siswa' ? 'selected' : '' }}>Siswa</option>
+                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <label for="password" class="form-label">
                                 <i class="fas fa-lock"></i> Password
                             </label>
@@ -379,24 +407,30 @@
                         </div>
 
                         <div class="form-group">
-                            <div class="checkbox-wrapper">
-                                <input type="checkbox" id="remember" name="remember" class="checkbox-input" />
-                                <label for="remember" class="checkbox-label">Ingat saya di perangkat ini</label>
-                            </div>
+                            <label for="password_confirmation" class="form-label">
+                                <i class="fas fa-lock"></i> Konfirmasi Password
+                            </label>
+                            <input
+                                id="password_confirmation"
+                                name="password_confirmation"
+                                type="password"
+                                placeholder="Konfirmasi password Anda"
+                                required
+                                class="form-input"
+                            />
                         </div>
 
                         <button type="submit" class="btn-login form-group">
-                            <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
-                            Masuk Sekarang
+                            <i class="fas fa-user-plus" style="margin-right: 8px;"></i>
+                            Daftar Sekarang
                         </button>
                     </form>
 
                     <p class="info-text">
-                        <i class="fas fa-info-circle"></i> Belum punya akun? <a href="{{ route('register') }}" style="color: #00a8cc; font-weight: 600;">Daftar di sini</a>
+                        <i class="fas fa-info-circle"></i> Sudah punya akun? <a href="{{ route('login') }}" style="color: #00a8cc; font-weight: 600;">Masuk di sini</a>
                     </p>
                 </div>
             </div>
         </div>
     </body>
 </html>
-
