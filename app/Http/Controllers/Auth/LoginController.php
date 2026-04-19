@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\AdminController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -82,13 +83,7 @@ class LoginController extends Controller
 
     public function adminDashboard()
     {
-        $user = Auth::user();
-
-        abort_unless($user->role === 'admin', 403);
-
-        return view('dashboard.admin', [
-            'user' => $user,
-        ]);
+        return app(AdminController::class)->dashboard();
     }
 
     public function siswaDashboard()
