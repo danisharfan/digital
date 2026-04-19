@@ -1,165 +1,398 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Daftar Pengaduan - Pengaduan Siswa</title>
+
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @else
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.4/dist/tailwind.min.css">
     @endif
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         * {
             font-family: 'Poppins', sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #0d7377 0%, #14919b 25%, #00d4ff 50%, #14919b 75%, #0d7377 100%);
+            background: linear-gradient(135deg, #0d7377 0%, #14919b 25%, #00d4ff 55%, #14919b 80%, #0d7377 100%);
             background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            animation: bgMove 15s ease infinite;
             min-height: 100vh;
-            padding: 20px;
+            padding: 25px;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        @keyframes bgMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
-        .dashboard-card {
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid rgba(13, 115, 119, 0.2);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
-                        inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(20px);
+        .wrapper {
+            max-width: 1300px;
+            margin: auto;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, .96);
             border-radius: 24px;
-            overflow: hidden;
+            padding: 35px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, .18);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #00a8cc 0%, #00d4ff 100%);
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .sub {
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
             color: white;
-            border: none;
-            border-radius: 14px;
-            padding: 12px 24px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+            transition: .3s;
         }
 
-        .btn-primary:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 168, 204, 0.3);
         }
 
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+        .btn-main {
+            background: linear-gradient(135deg, #00a8cc, #00d4ff);
+        }
+
+        .btn-back {
+            background: #6b7280;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            font-weight: 500;
+        }
+
+        .table-box {
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 950px;
+        }
+
+        thead {
+            background: #0d7377;
+            color: white;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-size: 14px;
             font-weight: 600;
         }
 
-        .status-pending { background: #fef3c7; color: #d97706; }
-        .status-ditanggapi { background: #dbeafe; color: #2563eb; }
-        .status-selesai { background: #d1fae5; color: #065f46; }
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+            font-size: 14px;
+            color: #374151;
+        }
 
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pending {
+            background: #fff7d6;
+            color: #d97706;
+        }
+
+        .ditanggapi {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .selesai {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .desc {
+            max-width: 330px;
+            line-height: 1.6;
+            color: #6b7280;
+        }
+
+        .thumb {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .action {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action a,
+        .action button {
+            border: none;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .view {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .edit {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .empty-box {
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .empty-box i {
+            font-size: 55px;
+            color: #9ca3af;
+            margin-bottom: 18px;
+        }
+
+        .empty-box h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .empty-box p {
+            color: #6b7280;
+            margin: 10px 0 24px;
+        }
+
+        .pagination {
+            margin-top: 22px;
+        }
+
+        @media(max-width:768px) {
+            .main-card {
+                padding: 22px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .btn-group {
+                width: 100%;
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="max-w-6xl mx-auto">
-        <div class="dashboard-card p-8">
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
+
+    <div class="wrapper">
+        <div class="main-card">
+
+            <!-- Header -->
+            <div class="topbar">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Daftar Pengaduan</h1>
-                    <p class="text-gray-600">Kelola pengaduan Anda dengan mudah</p>
+                    <div class="title">Daftar Pengaduan</div>
+                    <div class="sub">Kelola semua pengaduan Anda dengan rapi dan mudah</div>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                    <a href="{{ route('siswa.dashboard') }}" class="btn-primary text-center">
-                        <i class="fas fa-arrow-left mr-2"></i>Kembali ke Dashboard
+
+                <div class="btn-group">
+                    <a href="{{ route('siswa.dashboard') }}" class="btn btn-back">
+                        <i class="fas fa-arrow-left mr-2"></i>Dashboard
                     </a>
-                    <a href="{{ route('pengaduan.create') }}" class="btn-primary text-center">
-                        <i class="fas fa-plus mr-2"></i>Buat Pengaduan Baru
+
+                    <a href="{{ route('pengaduan.create') }}" class="btn btn-main">
+                        <i class="fas fa-plus mr-2"></i>Buat Pengaduan
                     </a>
                 </div>
             </div>
 
-            @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
-                    <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+            <!-- Alert -->
+            @if (session('success'))
+                <div class="alert-success">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    {{ session('success') }}
                 </div>
             @endif
 
-            @if($pengaduan->count() > 0)
-                <div class="grid gap-4 md:gap-6">
-                    @foreach($pengaduan as $item)
-                        <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-6 shadow-sm hover:shadow-md transition duration-200">
-                            <div class="flex flex-col lg:flex-row gap-4">
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-                                        <h3 class="text-lg md:text-xl font-semibold text-gray-800 truncate">{{ $item->judul }}</h3>
-                                        <span class="status-badge status-{{ $item->status }} self-start flex-shrink-0">
+            <!-- Data -->
+            @if ($pengaduan->count() > 0)
+
+                <div class="table-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Judul</th>
+                                <th>Isi Laporan</th>
+                                <th>Status</th>
+                                <th>Feedback</th>
+                                <th>Tanggal</th>
+                                <th>Foto</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($pengaduan as $index => $item)
+                                <tr>
+                                    <td>{{ $pengaduan->firstItem() + $index }}</td>
+
+                                    <td>
+                                        <strong>{{ $item->judul }}</strong>
+                                    </td>
+
+                                    <td>
+                                        <div class="desc">
+                                            {{ Str::limit($item->isi_laporan, 90) }}
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <span class="badge {{ $item->status }}">
                                             {{ ucfirst($item->status) }}
                                         </span>
-                                    </div>
-                                    <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ Str::limit($item->isi_laporan, 150) }}</p>
-                                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-calendar mr-1"></i>
-                                            {{ $item->tanggal_lapor->format('d M Y H:i') }}
-                                        </span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        <a href="{{ route('pengaduan.show', $item) }}" class="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition">
-                                            <i class="fas fa-eye mr-1"></i>Lihat Detail
-                                        </a>
-                                        @if($item->status === 'pending')
-                                            <a href="{{ route('pengaduan.edit', $item) }}" class="inline-flex items-center px-3 py-1 text-sm font-medium text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 rounded-md transition">
-                                                <i class="fas fa-edit mr-1"></i>Edit
-                                            </a>
-                                            <form action="{{ route('pengaduan.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengaduan ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="inline-flex items-center px-3 py-1 text-sm font-medium text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md transition">
-                                                    <i class="fas fa-trash mr-1"></i>Hapus
-                                                </button>
-                                            </form>
+                                    </td>
+                                    <td>
+                                        @if ($item->feedback)
+                                            <div style="max-width:200px; color:#065f46; font-size:13px;">
+                                                {{ Str::limit($item->feedback, 80) }}
+                                            </div>
+                                            @if ($item->feedback_at)
+                                                <small class="text-gray-400">
+                                                    {{ $item->feedback_at->format('d M Y H:i') }}
+                                                </small>
+                                            @endif
+                                        @else
+                                            <span class="text-gray-400">Belum ada feedback</span>
                                         @endif
-                                    </div>
-                                </div>
-                                @if($item->foto)
-                                    <div class="flex-shrink-0">
-                                        <img src="{{ Storage::url($item->foto) }}" alt="Foto pengaduan" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-lg border border-gray-200">
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
+                                    </td>
+                                    <td>
+                                        {{ $item->tanggal_lapor->format('d M Y') }}<br>
+                                        <small>{{ $item->tanggal_lapor->format('H:i') }}</small>
+                                    </td>
+
+                                    <td>
+                                        @if ($item->foto)
+                                            <img src="{{ Storage::url($item->foto) }}" class="thumb">
+                                        @else
+                                            <span class="text-gray-400">-</span>
+                                        @endif
+                                    </td>
+
+                                    <td>
+                                        <div class="action">
+                                            <a href="{{ route('pengaduan.show', $item) }}" class="view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    {{ $pengaduan->links() }}
                 </div>
             @else
-                <div class="text-center py-16">
-                    <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-inbox text-4xl text-gray-400"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">Belum ada pengaduan</h3>
-                    <p class="text-gray-500 mb-8 max-w-md mx-auto">Anda belum membuat pengaduan apapun. Mulai buat pengaduan pertama Anda untuk melaporkan masalah atau keluhan.</p>
-                    <a href="{{ route('pengaduan.create') }}" class="btn-primary inline-block">
+                <div class="empty-box">
+                    <i class="fas fa-inbox"></i>
+                    <h3>Belum Ada Pengaduan</h3>
+                    <p>Anda belum membuat pengaduan apapun.</p>
+
+                    <a href="{{ route('pengaduan.create') }}" class="btn btn-main">
                         <i class="fas fa-plus mr-2"></i>Buat Pengaduan Pertama
                     </a>
                 </div>
+
             @endif
+
         </div>
     </div>
+
 </body>
+
 </html>

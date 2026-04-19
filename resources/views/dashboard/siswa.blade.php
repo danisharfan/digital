@@ -1,210 +1,324 @@
 <!DOCTYPE html>
 <html lang="id">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Dashboard Siswa - Pengaduan Siswa</title>
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @else
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.4/dist/tailwind.min.css">
-        @endif
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <style>
-            * {
-                font-family: 'Poppins', sans-serif;
-            }
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Siswa</title>
 
-            body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: linear-gradient(135deg, #0d7377 0%, #14919b 25%, #00d4ff 50%, #14919b 75%, #0d7377 100%);
-                background-size: 400% 400%;
-                animation: gradientShift 15s ease infinite;
-                min-height: 100vh;
-            }
+@if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+@else
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.4/dist/tailwind.min.css">
+@endif
 
-            @keyframes gradientShift {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
-            }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-            .dashboard-card {
-                background: rgba(255, 255, 255, 0.96);
-                border: 1px solid rgba(13, 115, 119, 0.2);
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
-                            inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
-                backdrop-filter: blur(20px);
-                border-radius: 24px;
-                overflow: hidden;
-                max-width: 600px;
-                width: 100%;
-            }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
 
-            .btn-primary {
-                background: linear-gradient(135deg, #00a8cc 0%, #00d4ff 100%);
-                color: white;
-                border: none;
-                border-radius: 14px;
-                padding: 14px 24px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s;
-                text-decoration: none;
-                display: inline-block;
-                text-align: center;
-            }
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#0d7377,#14919b,#00d4ff,#14919b,#0d7377);
+    background-size:400% 400%;
+    animation:bgMove 15s ease infinite;
+    padding:25px;
+}
 
-            .btn-primary:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 10px 25px rgba(0, 168, 204, 0.3);
-            }
+@keyframes bgMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
 
-            .btn-secondary {
-                background: #f3f4f6;
-                color: #374151;
-                border: 2px solid #d1d5db;
-                border-radius: 14px;
-                padding: 14px 24px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s;
-                text-decoration: none;
-                display: inline-block;
-                text-align: center;
-            }
+.wrapper{
+    max-width:1200px;
+    margin:auto;
+}
 
-            .btn-secondary:hover {
-                background: #e5e7eb;
-                transform: translateY(-2px);
-            }
+.topbar{
+    background:rgba(255,255,255,.95);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    margin-bottom:24px;
+}
 
-            .feature-card {
-                background: linear-gradient(135deg, #f0fffe 0%, #e0f7ff 100%);
-                border: 1px solid rgba(0, 168, 204, 0.2);
-                border-radius: 16px;
-                padding: 24px;
-                transition: all 0.3s;
-                height: 100%;
-            }
+.badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 16px;
+    border-radius:999px;
+    background:#ecfeff;
+    color:#0d7377;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:14px;
+}
 
-            .feature-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 10px 25px rgba(0, 168, 204, 0.2);
-            }
+.title{
+    font-size:34px;
+    font-weight:800;
+    color:#111827;
+    margin-bottom:6px;
+}
 
-            .feature-icon {
-                width: 60px;
-                height: 60px;
-                background: linear-gradient(135deg, #00a8cc 0%, #00d4ff 100%);
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 1.8rem;
-                margin-bottom: 16px;
-                box-shadow: 0 4px 12px rgba(0, 168, 204, 0.3);
-            }
+.sub{
+    color:#6b7280;
+    font-size:15px;
+}
 
-            .stat-card {
-                background: white;
-                border: 1px solid #e5e7eb;
-                border-radius: 12px;
-                padding: 16px;
-                text-align: center;
-                transition: all 0.3s;
-            }
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    margin-bottom:24px;
+}
 
-            .stat-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            }
-        </style>
-    </head>
-    <body class="flex items-center justify-center min-h-screen px-4 py-8">
-        <div class="dashboard-card" style="padding: 32px;">
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center gap-3 bg-gradient-to-r from-blue-100 to-cyan-100 border border-blue-200 px-4 py-2 rounded-full mb-4">
-                    <i class="fas fa-user-graduate text-blue-600"></i>
-                    <span class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Dashboard Siswa</span>
-                </div>
-                <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-700 to-cyan-600 bg-clip-text text-transparent mb-2">
-                    Selamat Datang, {{ $user->nama }}!
-                </h1>
-                <p class="text-gray-600">Kelola pengaduan Anda dengan mudah dan efisien</p>
-            </div>
+.card{
+    background:rgba(255,255,255,.95);
+    border-radius:22px;
+    padding:24px;
+    box-shadow:0 20px 35px rgba(0,0,0,.10);
+}
 
-            <div class="grid gap-6 mb-8">
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-plus-circle"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Buat Pengaduan Baru</h3>
-                        <p class="text-gray-600 text-sm mb-4">Laporkan masalah atau keluhan Anda dengan detail</p>
-                        <a href="{{ route('pengaduan.create') }}" class="btn-primary w-full block text-center">
-                            <i class="fas fa-plus mr-2"></i>Buat Pengaduan
-                        </a>
-                    </div>
+.icon{
+    width:60px;
+    height:60px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:24px;
+    margin-bottom:18px;
+}
 
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-list-ul"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lihat Pengaduan Saya</h3>
-                        <p class="text-gray-600 text-sm mb-4">Pantau status dan riwayat pengaduan Anda</p>
-                        <a href="{{ route('pengaduan.index') }}" class="btn-primary w-full block text-center">
-                            <i class="fas fa-eye mr-2"></i>Lihat Pengaduan
-                        </a>
-                    </div>
-                </div>
+.blue{background:linear-gradient(135deg,#06b6d4,#3b82f6);}
+.green{background:linear-gradient(135deg,#10b981,#22c55e);}
+.orange{background:linear-gradient(135deg,#f59e0b,#f97316);}
 
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Statistik Pengaduan</h3>
-                    <p class="text-gray-600 text-sm mb-4">Lihat ringkasan pengaduan Anda</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
-                            <div class="flex items-center justify-center mb-1">
-                                <i class="fas fa-clock text-yellow-600 mr-2"></i>
-                                <span class="text-sm font-medium text-yellow-800">Pending</span>
-                            </div>
-                    <div class="text-3xl font-bold text-yellow-700">{{ \App\Models\Pengaduan::where('id_user', $user->id)->where('status', 'pending')->count() }}</div>
-                        </div>
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
-                            <div class="flex items-center justify-center mb-1">
-                                <i class="fas fa-check-circle text-blue-600 mr-2"></i>
-                                <span class="text-sm font-medium text-blue-800">Ditanggapi</span>
-                            </div>
-                            <div class="text-2xl font-bold text-blue-700">{{ \App\Models\Pengaduan::where('id_user', $user->id)->where('status', 'ditanggapi')->count() }}</div>
-                        </div>
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-                            <div class="flex items-center justify-center mb-1">
-                                <i class="fas fa-check-double text-green-600 mr-2"></i>
-                                <span class="text-sm font-medium text-green-800">Selesai</span>
-                            </div>
-                            <div class="text-2xl font-bold text-green-700">{{ \App\Models\Pengaduan::where('id_user', $user->id)->where('status', 'selesai')->count() }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+.card h3{
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:8px;
+    color:#111827;
+}
 
-            <div class="text-center">
-                <form method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button type="submit" class="btn-secondary">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Keluar
-                    </button>
-                </form>
-            </div>
+.card p{
+    color:#6b7280;
+    font-size:14px;
+    margin-bottom:18px;
+}
+
+.btn{
+    display:inline-block;
+    width:100%;
+    text-align:center;
+    padding:13px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:600;
+    text-decoration:none;
+    color:#fff;
+    background:linear-gradient(135deg,#00a8cc,#00d4ff);
+    transition:.25s;
+}
+
+.btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 25px rgba(0,168,204,.25);
+}
+
+.stats{
+    background:rgba(255,255,255,.95);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 20px 35px rgba(0,0,0,.10);
+    margin-bottom:24px;
+}
+
+.stats h2{
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:22px;
+    color:#111827;
+}
+
+.stat-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.stat{
+    border-radius:18px;
+    padding:20px;
+    text-align:center;
+}
+
+.pending{background:#fef9c3;}
+.reply{background:#dbeafe;}
+.done{background:#dcfce7;}
+
+.stat i{
+    font-size:24px;
+    margin-bottom:10px;
+}
+
+.stat h4{
+    font-size:14px;
+    margin-bottom:8px;
+    color:#374151;
+}
+
+.stat .num{
+    font-size:32px;
+    font-weight:800;
+}
+
+.logout{
+    text-align:center;
+}
+
+.logout button{
+    border:none;
+    padding:14px 26px;
+    border-radius:14px;
+    background:#ffffff;
+    color:#111827;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.logout button:hover{
+    transform:translateY(-2px);
+}
+
+@media(max-width:900px){
+    .grid,.stat-grid{
+        grid-template-columns:1fr;
+    }
+
+    .title{
+        font-size:28px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <!-- Header -->
+    <div class="topbar">
+        <div class="badge">
+            <i class="fas fa-user-graduate"></i> Dashboard Siswa
         </div>
-    </body>
+
+        <div class="title">
+            Halo, {{ $user->nama }} 👋
+        </div>
+
+        <div class="sub">
+            Selamat datang kembali. Kelola pengaduan sekolah dengan mudah.
+        </div>
+    </div>
+
+    <!-- Menu -->
+    <div class="grid">
+
+        <div class="card">
+            <div class="icon blue">
+                <i class="fas fa-plus"></i>
+            </div>
+            <h3>Buat Pengaduan</h3>
+            <p>Kirim laporan baru secara cepat dan detail.</p>
+
+            <a href="{{ route('pengaduan.create') }}" class="btn">
+                Buat Sekarang
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="icon green">
+                <i class="fas fa-list"></i>
+            </div>
+            <h3>Pengaduan Saya</h3>
+            <p>Lihat semua riwayat laporan yang pernah dibuat.</p>
+
+            <a href="{{ route('pengaduan.index') }}" class="btn">
+                Lihat Data
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="icon orange">
+                <i class="fas fa-bell"></i>
+            </div>
+            <h3>Status Terbaru</h3>
+            <p>Pantau proses penanganan pengaduan Anda.</p>
+
+            <a href="{{ route('pengaduan.index') }}" class="btn">
+                Cek Status
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Statistik -->
+    <div class="stats">
+        <h2>Statistik Pengaduan</h2>
+
+        <div class="stat-grid">
+
+            <div class="stat pending">
+                <i class="fas fa-clock text-yellow-600"></i>
+                <h4>Pending</h4>
+                <div class="num text-yellow-700">
+                    {{ \App\Models\Pengaduan::where('id_user',$user->id)->where('status','pending')->count() }}
+                </div>
+            </div>
+
+            <div class="stat reply">
+                <i class="fas fa-reply text-blue-600"></i>
+                <h4>Ditanggapi</h4>
+                <div class="num text-blue-700">
+                    {{ \App\Models\Pengaduan::where('id_user',$user->id)->where('status','ditanggapi')->count() }}
+                </div>
+            </div>
+
+            <div class="stat done">
+                <i class="fas fa-check-circle text-green-600"></i>
+                <h4>Selesai</h4>
+                <div class="num text-green-700">
+                    {{ \App\Models\Pengaduan::where('id_user',$user->id)->where('status','selesai')->count() }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Logout -->
+    <div class="logout">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit">
+                <i class="fas fa-sign-out-alt mr-2"></i> Keluar
+            </button>
+        </form>
+    </div>
+
+</div>
+
+</body>
 </html>

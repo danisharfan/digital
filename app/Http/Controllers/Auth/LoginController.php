@@ -22,6 +22,28 @@ class LoginController extends Controller
         return view('auth.register');
     }
 
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'unique:users,username', 'min:3', 'max:255'],
+            'nama' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'in:admin,siswa'],
+        ]);
+
+        $user = User::create([
+            'username' => $validated['username'],
+            'nama' => $validated['nama'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
+        ]);
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route($this->redirectToDashboard($user));
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -39,27 +61,6 @@ class LoginController extends Controller
 
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
-
-        return redirect()->intended(route($this->redirectToDashboard($user)));
-    }
-
-    public function register(Request $request)
-    {
-        $request->validate([
-            'username' => ['required', 'string', 'unique:users,username', 'max:255'],
-            'nama' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'in:admin,siswa'],
-        ]);
-
-        $user = User::create([
-            'username' => $request->username,
-            'nama' => $request->nama,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
-
-        Auth::login($user);
 
         return redirect()->route($this->redirectToDashboard($user));
     }
@@ -104,6 +105,8 @@ class LoginController extends Controller
 
     protected function dashboardRoute(User $user): string
     {
-        return $user->role === 'admin' ? 'admin.dashboard' : 'siswa.dashboard';
+        return $user->role === 'admin'
+            ? 'admin.dashboard'
+            : 'siswa.dashboard';
     }
 }

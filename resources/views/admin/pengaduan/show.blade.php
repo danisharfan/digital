@@ -1,257 +1,182 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Detail Pengaduan - Admin</title>
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @else
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.4/dist/tailwind.min.css">
-    @endif
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            font-family: 'Poppins', sans-serif;
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detail Pengaduan - Admin</title>
 
-        body {
-            background: linear-gradient(135deg, #0d7377 0%, #14919b 25%, #00d4ff 50%, #14919b 75%, #0d7377 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            min-height: 100vh;
-            padding: 20px;
-        }
+@if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+@else
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.4/dist/tailwind.min.css">
+@endif
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        .detail-card {
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid rgba(13, 115, 119, 0.2);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
-                        inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            overflow: hidden;
-        }
+<style>
+*{font-family:'Poppins',sans-serif;}
 
-        .status-badge {
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
+body{
+    background:linear-gradient(135deg,#0d7377,#14919b,#00d4ff,#14919b,#0d7377);
+    background-size:400% 400%;
+    animation:bgMove 15s ease infinite;
+    min-height:100vh;
+    padding:20px;
+}
 
-        .status-pending { background: #fef3c7; color: #d97706; }
-        .status-ditanggapi { background: #dbeafe; color: #2563eb; }
-        .status-selesai { background: #d1fae5; color: #065f46; }
+@keyframes bgMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
 
-        .btn-action {
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
+.card{
+    background:rgba(255,255,255,.96);
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 20px 45px rgba(0,0,0,.18);
+}
 
-        .btn-primary {
-            background: linear-gradient(135deg, #00a8cc 0%, #00d4ff 100%);
-            color: white;
-            border: none;
-        }
+.badge{
+    padding:6px 14px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:700;
+}
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 168, 204, 0.3);
-        }
+.pending{background:#fef3c7;color:#d97706;}
+.ditanggapi{background:#dbeafe;color:#2563eb;}
+.selesai{background:#dcfce7;color:#166534;}
 
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-            border: 2px solid #d1d5db;
-        }
+.btn{
+    padding:10px 16px;
+    border-radius:10px;
+    font-weight:600;
+    color:white;
+}
 
-        .btn-secondary:hover {
-            background: #e5e7eb;
-            transform: translateY(-2px);
-        }
+.btn-primary{background:linear-gradient(135deg,#00a8cc,#00d4ff);}
+.btn-secondary{background:#6b7280;}
 
-        .feedback-card {
-            background: linear-gradient(135deg, #f0fffe 0%, #e0f7ff 100%);
-            border: 1px solid rgba(0, 168, 204, 0.2);
-            border-radius: 16px;
-            padding: 20px;
-        }
-
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            font-size: 1rem;
-            border: 2px solid #d1eff5;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #f0fffe 0%, #e0f7ff 100%);
-            color: #0d7377;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            outline: none;
-            border-color: #00a8cc;
-            background: linear-gradient(135deg, #ffffff 0%, #f0fffe 100%);
-            box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.15);
-            transform: translateY(-1px);
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-    </style>
+textarea,select{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #d1d5db;
+}
+</style>
 </head>
+
 <body>
-    <div class="max-w-6xl mx-auto">
-        <div class="detail-card p-8">
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Detail Pengaduan</h1>
-                    <p class="text-gray-600">Kelola pengaduan siswa</p>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <a href="{{ route('admin.pengaduan.index') }}" class="btn-action btn-secondary">
-                        <i class="fas fa-arrow-left mr-2"></i>Kembali
-                    </a>
-                </div>
-            </div>
 
-            @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
-                    <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-                </div>
-            @endif
+<div class="max-w-6xl mx-auto">
 
-            <div class="grid lg:grid-cols-3 gap-8">
-                <!-- Pengaduan Detail -->
-                <div class="lg:col-span-2">
-                    <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6">
-                        <div class="flex justify-between items-start gap-4 mb-4">
-                            <h2 class="text-2xl font-semibold text-gray-800 flex-1">{{ $pengaduan->judul }}</h2>
-                            <span class="status-badge status-{{ $pengaduan->status }} flex-shrink-0">
-                                {{ ucfirst($pengaduan->status) }}
-                            </span>
-                        </div>
+<div class="card">
 
-                        <div class="space-y-4 mb-6">
-                            <div class="grid md:grid-cols-2 gap-4 text-sm">
-                                <div>
-                                    <span class="font-medium text-gray-600">Siswa:</span>
-                                    <p class="text-gray-800">{{ $pengaduan->user->nama }} ({{ $pengaduan->user->username }})</p>
-                                </div>
-                                <div>
-                                    <span class="font-medium text-gray-600">Tanggal Lapor:</span>
-                                    <p class="text-gray-800">{{ $pengaduan->tanggal_lapor->format('d M Y H:i') }}</p>
-                                </div>
-                                <div>
-                                    <span class="font-medium text-gray-600">Dibuat:</span>
-                                    <p class="text-gray-800">{{ $pengaduan->created_at->format('d M Y H:i') }}</p>
-                                </div>
-                                @if($pengaduan->updated_at != $pengaduan->created_at)
-                                    <div>
-                                        <span class="font-medium text-gray-600">Terakhir Diubah:</span>
-                                        <p class="text-gray-800">{{ $pengaduan->updated_at->format('d M Y H:i') }}</p>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+<!-- HEADER -->
+<div class="flex justify-between items-center mb-6 flex-wrap gap-3">
+    <div>
+        <h1 class="text-2xl font-bold">Detail Pengaduan</h1>
+        <p class="text-gray-500">Kelola laporan siswa</p>
+    </div>
 
-                        <div class="bg-gray-50 rounded-lg p-4 mb-6">
-                            <h3 class="font-semibold text-gray-800 mb-3">Isi Laporan:</h3>
-                            <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ $pengaduan->isi_laporan }}</p>
-                        </div>
+    <a href="{{ route('admin.pengaduan.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
 
-                        @if($pengaduan->foto)
-                            <div class="mb-6">
-                                <h3 class="font-semibold text-gray-800 mb-3">Foto Pendukung:</h3>
-                                <div class="bg-gray-50 rounded-lg p-4">
-                                    <img src="{{ Storage::url($pengaduan->foto) }}" alt="Foto pengaduan" class="max-w-full h-auto rounded-lg shadow-sm">
-                                </div>
-                            </div>
-                        @endif
-                    </div>
+@if(session('success'))
+<div class="bg-green-100 text-green-700 p-3 rounded mb-4">
+    {{ session('success') }}
+</div>
+@endif
 
-                    <!-- Feedback Section -->
-                    @if($pengaduan->feedback)
-                        <div class="feedback-card">
-                            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                <i class="fas fa-reply mr-2 text-blue-600"></i>
-                                Tanggapan Admin
-                            </h3>
-                            <div class="bg-white rounded-lg p-4 border border-blue-200">
-                                <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ $pengaduan->feedback }}</p>
-                                <div class="mt-3 text-sm text-gray-500">
-                                    <i class="fas fa-calendar mr-1"></i>Ditanggapi pada {{ $pengaduan->feedback_at->format('d M Y H:i') }}
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
+<div class="grid md:grid-cols-3 gap-6">
 
-                <!-- Action Panel -->
-                <div>
-                    <div class="bg-white border border-gray-200 rounded-xl p-6 sticky top-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Kelola Pengaduan</h3>
+<!-- LEFT -->
+<div class="md:col-span-2 space-y-4">
 
-                        <form action="{{ route('admin.pengaduan.update-status', $pengaduan) }}" method="POST">
-                            @csrf
-                            @method('PUT')
+    <!-- CARD INFO -->
+    <div class="border rounded-xl p-4">
+        <div class="flex justify-between items-start">
+            <h2 class="text-xl font-semibold">{{ $pengaduan->judul }}</h2>
+            <span class="badge {{ $pengaduan->status }}">
+                {{ ucfirst($pengaduan->status) }}
+            </span>
+        </div>
 
-                            <div class="mb-4">
-                                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-tasks mr-1"></i>Status Pengaduan
-                                </label>
-                                <select name="status" id="status" class="form-select" required>
-                                    <option value="pending" {{ $pengaduan->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="ditanggapi" {{ $pengaduan->status === 'ditanggapi' ? 'selected' : '' }}>Ditanggapi</option>
-                                    <option value="selesai" {{ $pengaduan->status === 'selesai' ? 'selected' : '' }}>Selesai</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-6">
-                                <label for="feedback" class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-comment mr-1"></i>Tanggapan Admin
-                                </label>
-                                <textarea
-                                    name="feedback"
-                                    id="feedback"
-                                    rows="6"
-                                    class="form-textarea"
-                                    placeholder="Berikan tanggapan atau feedback untuk siswa..."
-                                >{{ $pengaduan->feedback }}</textarea>
-                                <p class="text-xs text-gray-500 mt-1">Opsional: Berikan penjelasan atau solusi untuk pengaduan ini</p>
-                            </div>
-
-                            <button type="submit" class="btn-primary w-full">
-                                <i class="fas fa-save mr-2"></i>Simpan Perubahan
-                            </button>
-                        </form>
-
-                        <div class="mt-4 pt-4 border-t border-gray-200">
-                            <div class="text-xs text-gray-500 space-y-1">
-                                <div><i class="fas fa-info-circle mr-1"></i>Status akan otomatis tersimpan</div>
-                                <div><i class="fas fa-clock mr-1"></i>Perubahan terakhir: {{ $pengaduan->updated_at->diffForHumans() }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="text-sm text-gray-500 mt-3 space-y-1">
+            <div>Siswa: {{ $pengaduan->user->nama }}</div>
+            <div>Tanggal: {{ $pengaduan->tanggal_lapor->format('d M Y H:i') }}</div>
         </div>
     </div>
+
+    <!-- ISI -->
+    <div class="bg-gray-50 p-4 rounded-xl">
+        <h3 class="font-semibold mb-2">Isi Laporan</h3>
+        <p class="text-gray-700 whitespace-pre-line">
+            {{ $pengaduan->isi_laporan }}
+        </p>
+    </div>
+
+    <!-- FOTO -->
+    @if($pengaduan->foto)
+    <div class="border rounded-xl p-4">
+        <h3 class="font-semibold mb-2">Foto</h3>
+        <img src="{{ Storage::url($pengaduan->foto) }}" class="rounded-lg">
+    </div>
+    @endif
+
+    <!-- FEEDBACK -->
+    @if($pengaduan->feedback)
+    <div class="bg-blue-50 p-4 rounded-xl border">
+        <h3 class="font-semibold mb-2 text-blue-700">
+            <i class="fas fa-reply mr-1"></i> Feedback Admin
+        </h3>
+
+        <p class="text-gray-700">
+            {{ $pengaduan->feedback }}
+        </p>
+
+        <small class="text-gray-500">
+            {{ $pengaduan->feedback_at?->format('d M Y H:i') }}
+        </small>
+    </div>
+    @endif
+
+</div>
+
+<!-- RIGHT -->
+<div class="border rounded-xl p-4 space-y-4">
+
+    <h3 class="font-semibold">Kelola</h3>
+
+    <form action="{{ route('admin.pengaduan.update-status',$pengaduan) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <label>Status</label>
+        <select name="status">
+            <option value="pending">Pending</option>
+            <option value="ditanggapi">Ditanggapi</option>
+            <option value="selesai">Selesai</option>
+        </select>
+
+        <label class="mt-3 block">Feedback</label>
+        <textarea name="feedback" rows="5">{{ $pengaduan->feedback }}</textarea>
+
+        <button class="btn btn-primary w-full mt-4">
+            Simpan
+        </button>
+    </form>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
 </body>
 </html>

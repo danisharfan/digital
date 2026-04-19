@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Pengaduan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class PengaduanController extends Controller
 {
     public function index()
     {
-        $pengaduan = Pengaduan::where('id_user', Auth::id())->orderBy('created_at', 'desc')->get();
+        $pengaduan = Pengaduan::where('id_user', Auth::id())
+            ->latest()
+            ->paginate(10);
+
         return view('pengaduan.index', compact('pengaduan'));
     }
 
@@ -24,75 +26,52 @@ class PengaduanController extends Controller
     {
         $request->validate([
             'judul' => 'required|string|max:255',
-            'isi_laporan' => 'required|string',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'isi_laporan' => 'required',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        $fotoPath = null;
+        // default null kalau tidak upload
+        $path = null;
+
+        // upload foto ke storage/app/public/pengaduan
         if ($request->hasFile('foto')) {
-            $fotoPath = $request->file('foto')->store('pengaduan', 'public');
+            $path = $request->file('foto')->store('pengaduan', 'public');
         }
 
         Pengaduan::create([
             'id_user' => Auth::id(),
             'judul' => $request->judul,
             'isi_laporan' => $request->isi_laporan,
-            'foto' => $fotoPath,
+            'foto' => $path,
             'tanggal_lapor' => now(),
+            'status' => 'pending'
         ]);
 
-        return redirect()->route('pengaduan.index')->with('success', 'Pengaduan berhasil dibuat.');
+        return redirect()->route('pengaduan.index')
+            ->with('success', 'Pengaduan berhasil dibuat');
     }
 
     public function show(Pengaduan $pengaduan)
     {
-        $this->authorize('view', $pengaduan);
+        if ($pengaduan->id_user != Auth::id()) {
+            abort(403);
+        }
+
         return view('pengaduan.show', compact('pengaduan'));
     }
 
     public function edit(Pengaduan $pengaduan)
     {
-        $this->authorize('update', $pengaduan);
-        return view('pengaduan.edit', compact('pengaduan'));
+        abort(403);
     }
 
     public function update(Request $request, Pengaduan $pengaduan)
     {
-        $this->authorize('update', $pengaduan);
-
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'isi_laporan' => 'required|string',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $fotoPath = $pengaduan->foto;
-        if ($request->hasFile('foto')) {
-            if ($fotoPath) {
-                Storage::disk('public')->delete($fotoPath);
-            }
-            $fotoPath = $request->file('foto')->store('pengaduan', 'public');
-        }
-
-        $pengaduan->update([
-            'judul' => $request->judul,
-            'isi_laporan' => $request->isi_laporan,
-            'foto' => $fotoPath,
-        ]);
-
-        return redirect()->route('pengaduan.show', $pengaduan)->with('success', 'Pengaduan berhasil diperbarui.');
+        abort(403);
     }
 
     public function destroy(Pengaduan $pengaduan)
     {
-        $this->authorize('delete', $pengaduan);
-
-        if ($pengaduan->foto) {
-            Storage::disk('public')->delete($pengaduan->foto);
-        }
-
-        $pengaduan->delete();
-
-        return redirect()->route('pengaduan.index')->with('success', 'Pengaduan berhasil dihapus.');
+        abort(403);
     }
 }
