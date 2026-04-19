@@ -154,6 +154,39 @@ height:90px;
 object-fit:cover;
 border-radius:14px;
 }
+.status-select{
+width: 160px;
+padding: 10px 38px 10px 14px;
+border-radius: 12px;
+border: 1px solid #d1d5db;
+background-color: #ffffff;
+font-size: 14px;
+font-weight: 600;
+color: #374151;
+cursor: pointer;
+
+/* hilangkan style default browser */
+appearance: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+
+/* arrow custom */
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%236b7280' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 7l4.5 4.5L14.5 7H5.5z'/%3E%3C/svg%3E");
+background-repeat: no-repeat;
+background-position: right 12px center;
+background-size: 14px;
+
+/* shadow biar gak flat */
+box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+transition: 0.2s ease;
+}
+
+.status-select:focus{
+outline: none;
+border-color: #00a8cc;
+box-shadow: 0 0 0 3px rgba(0,168,204,0.2);
+}
+
 </style>
 </head>
 
@@ -235,10 +268,10 @@ border-radius:14px;
 @csrf
 @method('PUT')
 
-<select name="status" class="border rounded-xl px-3 py-2">
-<option value="pending">Pending</option>
-<option value="ditanggapi">Ditanggapi</option>
-<option value="selesai">Selesai</option>
+<select name="status" class="status-select">
+    <option value="pending">Pending</option>
+    <option value="ditanggapi">Ditanggapi</option>
+    <option value="selesai">Selesai</option>
 </select>
 
 <button class="btn-success mt-2">
